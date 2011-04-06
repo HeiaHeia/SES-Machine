@@ -1,0 +1,15 @@
+defaults: &defaults
+  database:
+    name: ses_machine_test
+    host: localhost
+    port: 27017
+
+development:
+  <<: *defaults
+  database:
+    name: ses_machine_development
+
+production:
+  <<: *defaults
+  database:
+    name: ses_machine_production

@@ -1,0 +1,76 @@
+<%- if !request.env["HTTP_REFERER"].blank? && request.env["HTTP_REFERER"] != request.env["REQUEST_URI"] -%>
+  <div style="float:right;"><%= link_to "&larr; Back", :back %></div>
+<%- end -%>
+<h2>Message Status</h2>
+<div class="clear"></div>
+<div><span style="color:#aaa;">Email</span> <span style="font-weight: bold;"><%= @mail['address'].join(', ') %></span></div>
+<div><span style="color:#aaa;">Subject</span> <%= @mail['subject'] %></div>
+<hr class="gray"/>
+
+<%- unless @mail['bounce'].blank? -%>
+  <div>
+    <%= @mail['bounce']['date'].strftime('%d.%m.%Y %l:%M %p') %> <%= bounce_type(@mail['bounce_type']).humanize %>
+    <%- unless @mail['bounce']['details'].blank? -%>
+      <div style="color:#aaa;font-size:small;"><%= @mail['bounce']['details'] %></div>
+    <%- end -%>
+  </div>
+<%- end -%>
+<div><%= @mail['date'].strftime('%d.%m.%Y %l:%M %p') %> <span><%= bounce_type(0).humanize %></span></div>
+
+<ul>
+  <%- unless @mail['response'].blank? -%>
+    <li><a href="#" onclick="showAmazonResponse();">XML Amazon Response</a></li>
+  <%- end -%>
+  <li><a href="#" onclick="showPlainText();">Plain Text</a></li>
+  <li><a href="#" onclick="showRawSource();">Raw Source</a></li>
+  <%- unless @mail['bounce'].blank? -%>
+    <li><a href="#" onclick="showBounceRawSource();">Bounce Raw Source</a></li>
+  <%- end -%>
+</ul>
+
+<%- unless @mail['response'].blank? -%>
+  <div id="amazon-response" style="display:none;font-size:small;border:1px solid #aaa;">
+    <pre><%= h @mail['response'] %></pre>
+  </div>
+<%- end -%>
+<div id="plain-text" style="font-size:small;border:1px solid #aaa;"><%= simple_format @mail['body'] %></div>
+<div id="raw-source" style="display:none;font-size:small;border:1px solid #aaa;">
+  <%#= simple_format @mail['raw_source'] %>
+  <pre><%= h @mail['raw_source'] %></pre>
+</div>
+<%- unless @mail['bounce'].blank? -%>
+  <div id="bounce-raw-source" style="display:none;font-size:small;border:1px solid #aaa;">
+    <pre><%= h @mail['bounce']['raw_source'] %></pre>
+  </div>
+<%- end -%>
+
+<script type="text/javascript">
+  function showPlainText() {
+    document.getElementById('amazon-response').style.display = 'none';
+    document.getElementById('plain-text').style.display = null;
+    document.getElementById('raw-source').style.display = 'none';
+    document.getElementById('bounce-raw-source').style.display = 'none';
+    return false;
+  }
+  function showRawSource() {
+    document.getElementById('amazon-response').style.display = 'none';
+    document.getElementById('plain-text').style.display = 'none';
+    document.getElementById('raw-source').style.display = null;
+    document.getElementById('bounce-raw-source').style.display = 'none';
+    return false;
+  }
+  function showBounceRawSource() {
+    document.getElementById('amazon-response').style.display = 'none';
+    document.getElementById('plain-text').style.display = 'none';
+    document.getElementById('raw-source').style.display = 'none';
+    document.getElementById('bounce-raw-source').style.display = null;
+    return false;
+  }
+  function showAmazonResponse() {
+    document.getElementById('amazon-response').style.display = null;
+    document.getElementById('plain-text').style.display = 'none';
+    document.getElementById('raw-source').style.display = 'none';
+    document.getElementById('bounce-raw-source').style.display = 'none';
+    return false;
+  }
+</script>

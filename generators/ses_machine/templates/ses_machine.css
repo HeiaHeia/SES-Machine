@@ -1,0 +1,14 @@
+hr.black{border:none;border-bottom:1px solid black}
+hr.gray{border:none;border-bottom:1px solid #aaa}
+
+#ses-machine-wrapper{width:900px;margin:0 auto}
+
+.activity-date{padding:10px 0 5px 0;font-weight:bold}
+.activity-item{padding:5px 0;border:none;border-bottom:1px solid #aaa}
+    .activity-item.email-sent .address a{color:green}
+    .activity-item.unknown .address a{color:#666}
+    .activity-item.hard-bounce .address a{color:red}
+    .activity-item .status{float:right;color:gray;font-size:small}
+    .activity-item .subject{color:gray;font-size:small}
+.clear{height:1px;line-height:1px;clear:both}
+.flash-error{padding:8px 15px;border:1px solid #991010;background-color:#ffc0cb}

@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+  <title>Ses Machine</title>
+  <%= stylesheet_link_tag('ses_machine', :cache => true) unless ENV['RAILS_ENV'].eql?('test') %>
+</head>
+<body>
+  <div id="ses-machine-wrapper">
+    <h1>Ses Machine</h1>
+    <ul>
+      <li><%= link_to_unless_current 'Overview', ses_machine_path %></li>
+      <li><%= link_to_unless_current 'Activity', ses_machine_activity_path %></li>
+    </ul>
+    <%- flash.each do |k, v| -%>
+     <div class="flash-<%= k %>"><%= v %></div>
+    <%- end -%>
+    <%= yield -%>
+  </div>
+</body>
+</html>

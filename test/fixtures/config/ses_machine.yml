@@ -1,0 +1,11 @@
+defaults: &defaults
+  database:
+    name: ses_machine_test
+    host: localhost
+    port: 27017
+
+
+test:
+  <<: *defaults
+  database:
+    name: ses_machine_config_test
