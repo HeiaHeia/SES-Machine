@@ -4,11 +4,10 @@ module SesMachine #:nodoc:
   module Mailer #:nodoc:
 
     def perform_delivery_ses_machine(mail)
-      puts '-----SES-----' # TODO: remove
       mail = Mail.read_from_string(mail.encoded) if ActionMailer::VERSION::MAJOR < 3
       raw_source = SesMachine.use_dkim? ? sign_mail(mail) : mail.encoded
       # TODO: rescue ResponseError
-      response = ActionMailer::Base.custom_amazon_ses_mailer.send_raw_email(raw_source, :source => 'bounces@heiaheia.com') # TODO: Move to config
+      response = ActionMailer::Base.custom_amazon_ses_mailer.send_raw_email(raw_source, :source => SesMachine.email_account)
   
       doc = {
         :address => mail.to,

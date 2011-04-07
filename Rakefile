@@ -3,8 +3,9 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 require 'rake/gempackagetask'
 
-$LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
-require "ses_machine/version"
+lib = File.expand_path('../lib/', __FILE__)
+$:.unshift lib unless $:.include?(lib)
+require 'ses_machine/version'
 
 desc 'Default: run unit tests.'
 task :default => :test
@@ -20,33 +21,30 @@ end
 desc 'Generate documentation for the ses_machine plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'SesMachine'
+  rdoc.title    = 'Ses Machine'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-PKG_FILES = FileList[
-  '[a-zA-Z]*',
-  'generators/**/*',
-  'lib/**/*',
-  'rails/**/*',
-  'tasks/**/*',
-  'test/**/*'
-]
-
 spec = Gem::Specification.new do |s|
-  s.name = 'ses_machine'
-  s.version = SesMachine::VERSION::STRING
-  s.author = 'Kirill Nikitin'
-  s.email = 'locke23rus@gmail.com'
-  s.homepage = 'http://heiaheia.com/'
-  s.platform = Gem::Platform::RUBY
-  s.summary = "Ses Machine"
-  s.files = PKG_FILES.to_a
-  s.require_path = "lib"
-  s.has_rdoc = false
-  s.extra_rdoc_files = ["README"]
+  s.name        = 'ses_machine'
+  s.version     = SesMachine::VERSION::STRING
+  s.platform    = Gem::Platform::RUBY
+  s.author      = 'Kirill Nikitin'
+  s.email       = 'locke23rus@gmail.com'
+  s.homepage    = 'http://heiaheia.com/'
+  s.summary     = 'Ses Machine'
+  s.description = 'Ses Machine description'
+  
+  s.files        = `git ls-files`.split("\n")
+  s.test_files   = `git ls-files -- test/*`.split("\n")
+  s.require_path = ['lib']
+
+  s.add_dependency('mail', '~> 2.2.15')
+  s.add_dependency('aws-ses', '~> 0.4.2')
+  s.add_dependency('rubydkim', '~> 0.3.1')
+  s.add_dependency('mongo', '~> 1.3.0')
 end
 
 desc 'Turn this plugin into a gem.'
