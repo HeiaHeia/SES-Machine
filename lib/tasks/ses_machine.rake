@@ -10,7 +10,7 @@ namespace :ses_machine do
       imap.select(folder)
       imap.search(['FROM', 'email-bounces.amazonses.com', 'NOT', 'SEEN']).each do |message_id|
         data = imap.fetch(message_id, ['UID', 'ENVELOPE', 'RFC822'])[0]
-        imap.store(message_id, "-FLAGS", [:Seen]) # TODO: remove this line
+        # imap.store(message_id, "-FLAGS", [:Seen]) # Keep message as unread
         mail = Mail.read_from_string(data.attr['RFC822'])
         bounce = {
           :uid => data.attr['UID'],
