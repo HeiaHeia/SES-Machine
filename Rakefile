@@ -45,6 +45,7 @@ spec = Gem::Specification.new do |s|
   s.add_dependency('aws-ses', '~> 0.4.2')
   s.add_dependency('rubydkim', '~> 0.3.1')
   s.add_dependency('mongo', '~> 1.3.0')
+  s.add_dependency('will_paginate', '~> 2.3.15')
 end
 
 desc 'Turn this plugin into a gem.'

@@ -31,6 +31,7 @@
       <div class="clear"></div>
     </div>
   <%- end -%>
+  <%= will_paginate @messages.paginate(@page, @per_page, @messages_count) unless ENV['RAILS_ENV'].eql?('test') %>
 <%- else -%>
   No messages
 <%- end -%>
