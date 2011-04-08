@@ -6,36 +6,46 @@ namespace :ses_machine do
     imap.login(SesMachine.email_account, SesMachine.email_password)
     t = SesMachine.database['mails']
 
+    ['MessageNotFound', 'Unknown', 'SoftBounce', 'HardBounce'].each do |folder|
+      imap.create("SesMachine/#{folder}") unless imap.list('SesMachine/', folder)
+    end
+
     SesMachine.email_imap_folders.each do |folder|
       imap.select(folder)
-      imap.search(['FROM', 'email-bounces.amazonses.com', 'NOT', 'SEEN']).each do |message_id|
-        data = imap.fetch(message_id, ['UID', 'ENVELOPE', 'RFC822'])[0]
-        # imap.store(message_id, "-FLAGS", [:Seen]) # Keep message as unread
-        mail = Mail.read_from_string(data.attr['RFC822'])
-        bounce = {
-          :uid => data.attr['UID'],
-          :message_id => data.attr['ENVELOPE']['message_id'].split('@').first[1..-1],
-          :raw_source => data.attr['RFC822'],
-          :date => data.attr['ENVELOPE']['date'].to_time.utc
-        }
+      imap.search(['FROM', 'email-bounces.amazonses.com', 'NOT', 'SEEN']).each do |message|
+        data = imap.fetch(message, ['UID', 'ENVELOPE', 'RFC822'])[0]
         message_id = data.attr['ENVELOPE']['in_reply_to'].split('@').first[1..-1]
-        email = t.find_one('_id' => BSON::ObjectId(message_id))['address'].first
-        if mail.bounced?
-          if mail.retryable?
-            bounce_type = SesMachine::Bounce::TYPES[:soft_bounce]
-            SesMachine::Hooks.soft_bounce_hook(email) if SesMachine::Hooks.respond_to?(:soft_bounce_hook)
+        doc = t.find_one('message_id' => message_id)
+        if doc
+          mail = Mail.read_from_string(data.attr['RFC822'])
+          email = doc['address'].first
+          bounce = {
+            :uid => data.attr['UID'],
+            :message_id => data.attr['ENVELOPE']['message_id'].split('@').first[1..-1],
+            :raw_source => data.attr['RFC822'],
+            :date => data.attr['ENVELOPE']['date'].to_time.utc
+          }
+          if mail.bounced?
+            if mail.retryable?
+              imap.copy(message, 'SesMachine/SoftBounce')
+              bounce_type = SesMachine::Bounce::TYPES[:soft_bounce]
+              SesMachine::Hooks.soft_bounce_hook(email) if SesMachine::Hooks.respond_to?(:soft_bounce_hook)
+            else
+              imap.copy(message, 'SesMachine/HardBounce')
+              bounce_type = SesMachine::Bounce::TYPES[:hard_bounce]
+              SesMachine::Hooks.hard_bounce_hook(email) if SesMachine::Hooks.respond_to?(:hard_bounce_hook)
+            end
+            bounce.merge!(:details => mail.diagnostic_code.to_s)
+          # TODO: Add check for spam
           else
-            bounce_type = SesMachine::Bounce::TYPES[:hard_bounce]
-            SesMachine::Hooks.hard_bounce_hook(email) if SesMachine::Hooks.respond_to?(:hard_bounce_hook)
+            imap.copy(message, 'SesMachine/Unknown')
+            bounce_type = SesMachine::Bounce::TYPES[:unknown]
+            SesMachine::Hooks.unknown_hook(email) if SesMachine::Hooks.respond_to?(:unknown_hook)
           end
-          bounce.merge!(:details => mail.diagnostic_code.to_s)
-        # TODO: Add check for spam
+          t.update({'_id' => doc['_id']}, {'$set' => {'bounce' => bounce, 'bounce_type' => bounce_type}})
         else
-          bounce_type = SesMachine::Bounce::TYPES[:unknown]
-          SesMachine::Hooks.unknown_hook(email) if SesMachine::Hooks.respond_to?(:unknown_hook)
+          imap.copy(message, 'SesMachine/MessageNotFound')
         end
-        
-        t.update({'message_id' => message_id}, {'$set' => {'bounce' => bounce, 'bounce_type' => bounce_type}})
       end
     end
     imap.logout()
