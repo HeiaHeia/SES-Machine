@@ -3,6 +3,7 @@ require 'test_helper'
 class SesMachineControllerTest < ActionController::TestCase
   def setup
     SesMachine.config.load(File.join(File.dirname(__FILE__), 'fixtures', 'config', 'ses_machine.yml'))
+    SesMachine.database['mails'].remove
     SesMachine.database['mails'].insert('_id' => BSON::ObjectId('4d95f4ebf023ca49fa000001'),
                                         'date' => Time.now.utc,
                                         'address' => ['test@example.com'],

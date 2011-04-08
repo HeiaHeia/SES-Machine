@@ -37,7 +37,7 @@ class SesMachineController < ActionController::Base
       conditions.merge!('bounce_type' => @bounce_type)
     end
     unless params[:q].blank?
-      @q = SesMachine::InternalHelpers.get_keywords(params[:q].to_s.split)
+      @q = SesMachine::DB.get_keywords(params[:q].to_s.split)
       conditions.merge!('_keywords' =>  {'$all' => @q}) unless @q.blank?
     end
     @messages = t.find(conditions).sort('date', -1).skip(@page * @per_page).limit(@per_page).to_a

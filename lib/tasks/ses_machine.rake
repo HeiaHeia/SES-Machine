@@ -51,4 +51,11 @@ namespace :ses_machine do
     imap.logout()
     imap.disconnect()
   end
+
+  desc 'Update daily statistics'
+  task :daily_stats => :environment do
+    response = SesMachine::DB.update_daily_stats
+    puts "DAILY STATS (#{response['timeMillis']}ms) - #{response['ok'] ? 'Success' : 'Failure'}"
+  end
+
 end

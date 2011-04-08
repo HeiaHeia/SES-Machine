@@ -20,7 +20,7 @@ module SesMachine #:nodoc:
         :response_code => response.code,
         :response_error => response.error.to_s,
         :bounce_type => 0,
-        '_keywords' => SesMachine::InternalHelpers.get_keywords(mail.to + mail.subject.split)
+        '_keywords' => SesMachine::DB.get_keywords(mail.to + mail.subject.split)
       }
 
       SesMachine.database['mails'].insert(doc)
