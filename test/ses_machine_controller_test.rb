@@ -28,9 +28,6 @@ class SesMachineControllerTest < ActionController::TestCase
     get :activity
     assert_response :success
     assert_not_nil assigns(:messages)
-    assert_not_nil assigns(:messages_count)
-    assert_not_nil assigns(:page)
-    assert_not_nil assigns(:per_page)
     assert_not_nil assigns(:bounce_types)
   end
 
