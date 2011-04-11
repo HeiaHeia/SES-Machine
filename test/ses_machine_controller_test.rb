@@ -10,6 +10,7 @@ class SesMachineControllerTest < ActionController::TestCase
                                         'subject' => 'Test mail',
                                         'raw_source' => 'Test')
     ActionController::Routing::Routes.draw { |map| map.ses_machine }
+    @controller = SesMachineController.new
   end
 
   def teardown

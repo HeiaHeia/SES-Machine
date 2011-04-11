@@ -13,3 +13,15 @@
 # end
 #
 # SesMachine::Hooks.send :extend, SesMachineHooks
+
+
+module SesMachineAuthHooks
+  private
+
+  def ses_machine_authorize!
+    true
+  end
+end
+
+SesMachineController.send :include, SesMachineAuthHooks
+

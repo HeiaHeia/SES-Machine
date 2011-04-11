@@ -1,6 +1,6 @@
 namespace :ses_machine do
   desc 'Check email with IMAP for new bounced and spam messages'
-  task :check_email_imap => :environment do
+  task :check_email_imap do
 
     imap = Net::IMAP.new(SesMachine.email_server, SesMachine.email_port, SesMachine.email_use_ssl)
     imap.login(SesMachine.email_account, SesMachine.email_password)
