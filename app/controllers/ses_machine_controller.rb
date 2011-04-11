@@ -7,26 +7,18 @@ class SesMachineController < ActionController::Base
   layout 'ses_machine/application'
 
   def index
-    t = @db['mails']
-#    stats_period = (params[:stats_period] || Date.current).to_time.utc
-#    stats_from = stats_period.beginning_of_month
-#    stats_to = stats_period.end_of_month
-
-
-    # Mail Totals
-    totals_period = (params[:totals_period] || Date.current).to_time.utc
-    totals_from = totals_period.beginning_of_month
-    totals_to = totals_period.end_of_month
-
-    @count_mails_sent = t.find('date' => {'$gte' => totals_from, '$lt' => totals_to}).count
-    @count_mails_bounced = t.find('date' => {'$gte' => totals_from, '$lt' => totals_to}, 'bounce_type' => {'$ne' => SesMachine::Bounce::TYPES[:unknown]}).count
-    # TODO: Fix query
-    # @count_spam_complaints = t.find('date' => {'$gte' => totals_from, '$lt' => totals_to}, 'bounce_type' => 999).count
-    @count_spam_complaints = 0
+    @date = (params[:date] || Date.current).to_date.beginning_of_month
+    monthly_stats = @db['monthly_stats'].find().sort([['_id.year', Mongo::DESCENDING], ['_id.month', Mongo::DESCENDING]]).to_a
+    @monthly_stats = monthly_stats.map do |e|
+      date = Date.new(e['_id']['year'], e['_id']['month'])
+      [date.strftime("%B %Y"), date.to_s]
+    end
+    @stats = @db['monthly_stats'].find_one('_id.year' => @date.year, '_id.month' => @date.month)
+    @count_mails_sent = @stats.blank? ? 0 : @stats['value']['total'].to_i
+    @count_mails_bounced = @stats.blank? ? 0 : (@count_mails_sent - @stats['value'][SesMachine::Bounce::TYPES[:email_sent].to_s]).to_i
   end
 
   def activity
-    t = @db['mails']
     page = params[:page].to_i
     page = 1 if page < 1
     per_page = 25
@@ -41,17 +33,16 @@ class SesMachineController < ActionController::Base
       @q = SesMachine::DB.get_keywords(params[:q].to_s.split)
       conditions.merge!('_keywords' =>  {'$all' => @q}) unless @q.blank?
     end
-    @messages = t.find(conditions).sort('date', -1).skip((page-1) * per_page).limit(per_page).to_a
-    messages_count = t.find(conditions).count
+    @messages = @mails.find(conditions).sort('date', -1).skip((page-1) * per_page).limit(per_page).to_a
+    messages_count = @mails.find(conditions).count
     @bounce_types = SesMachine::Bounce::TYPES.map{|k, v| [k.to_s.humanize, v]}
     @bounce_types.unshift(['All emails', ''])
     @pager = WillPaginate::Collection.new(page, per_page, messages_count)
   end
 
   def show_message
-    t = @db['mails']
     begin
-      @mail = t.find_one('_id' => BSON::ObjectId(params[:id]))
+      @mail = @mails.find_one('_id' => BSON::ObjectId(params[:id]))
       @mail['body'] = Mail.read_from_string(@mail['raw_source']).body
     rescue
       flash[:error] = 'Mail not found'
@@ -62,5 +53,6 @@ class SesMachineController < ActionController::Base
   private
     def assign_database
       @db = SesMachine.database
+      @mails = @db['mails']
     end
 end

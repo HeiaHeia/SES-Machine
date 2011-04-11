@@ -21,7 +21,8 @@ class SesMachineControllerTest < ActionController::TestCase
     assert_response :success
     assert_not_nil assigns(:count_mails_sent)
     assert_not_nil assigns(:count_mails_bounced)
-    assert_not_nil assigns(:count_spam_complaints)
+    assert_not_nil assigns(:monthly_stats)
+    assert_not_nil assigns(:date)
   end
 
   def test_activity

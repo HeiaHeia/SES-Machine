@@ -1,7 +1,17 @@
 <h2>Mails Sent</h2>
-TRUE CHART
+<div>
+  <% form_tag ses_machine_path, :method => :get do %>
+    <%= select_tag 'date', options_for_select(@monthly_stats, @date.to_s), :onchange => "this.form.submit();" %>
+  <%- end -%>
+</div>
+
+<div>
+  TRUE CHART
+</div>
 
 <h2>Mail Stats</h2>
-<p><%= @count_mails_sent %> mails sent</p>
-<p><%= @count_mails_bounced %> mails bounced</p>
-<p><%= @count_spam_complaints %> mails spam complaints</p>
+<div>
+  <p><%= @count_mails_sent %> mails sent</p>
+  <p><%= @count_mails_bounced %> mails bounced</p>
+</div>
+
