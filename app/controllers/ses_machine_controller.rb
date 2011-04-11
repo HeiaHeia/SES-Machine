@@ -27,9 +27,9 @@ class SesMachineController < ActionController::Base
 
   def activity
     t = @db['mails']
-    @page = params[:page].to_i
-    @page = 1 if @page < 1
-    @per_page = 25
+    page = params[:page].to_i
+    page = 1 if page < 1
+    per_page = 25
     @bounce_type = ''
     @q = ''
     conditions = {}
@@ -41,10 +41,11 @@ class SesMachineController < ActionController::Base
       @q = SesMachine::DB.get_keywords(params[:q].to_s.split)
       conditions.merge!('_keywords' =>  {'$all' => @q}) unless @q.blank?
     end
-    @messages = t.find(conditions).sort('date', -1).skip((@page-1) * @per_page).limit(@per_page).to_a
-    @messages_count = t.find(conditions).count
+    @messages = t.find(conditions).sort('date', -1).skip((page-1) * per_page).limit(per_page).to_a
+    messages_count = t.find(conditions).count
     @bounce_types = SesMachine::Bounce::TYPES.map{|k, v| [k.to_s.humanize, v]}
     @bounce_types.unshift(['All emails', ''])
+    @pager = WillPaginate::Collection.new(page, per_page, messages_count)
   end
 
   def show_message
