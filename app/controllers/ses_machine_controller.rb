@@ -1,13 +1,13 @@
 class SesMachineController < ApplicationController
-  include SesMachineAuthHooks
-
   unloadable
 
+  unless ENV['RAILS_ENV'].eql?('test')
+    include SesMachineAuthHooks
+    before_filter :ses_machine_authorize!
+  end
+
   helper :ses_machine
-
   before_filter :assign_database
-  before_filter :ses_machine_authorize!
-
   layout 'ses_machine/application'
 
   def index
