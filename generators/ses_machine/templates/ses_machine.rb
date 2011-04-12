@@ -1,6 +1,3 @@
-ActionMailer::Base.custom_amazon_ses_mailer = AWS::SES::Base.new(:secret_access_key => 'secret_access_key', :access_key_id => 'access_key_id')
-ActionMailer::Base.delivery_method = :ses_machine
-
 SesMachine.configure do |config|
   # Email configuration for rake tasks
   config.email_server = 'imap.googlemail.com'
