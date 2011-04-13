@@ -77,4 +77,4 @@ end
 ENV['RAILS_ENV'] ||= Rails.env || 'development'
 ENV['RAILS_ROOT'] ||= Rails.root || File.dirname(__FILE__) + '/../../../..'
 
-SesMachine.config.load unless ENV['RAILS_ENV'].eql?('test')
+SesMachine.config.load

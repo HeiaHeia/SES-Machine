@@ -26,8 +26,12 @@ module SesMachine #:nodoc:
 
     def load(filename=nil)
       filename = File.join(ENV['RAILS_ROOT'], 'config', 'ses_machine.yml') if filename.blank?
-      settings = YAML.load_file(filename)[ENV['RAILS_ENV']]
-      from_hash(settings)
+      if File.exist?(filename)
+        settings = YAML.load_file(filename)[ENV['RAILS_ENV']]
+        from_hash(settings)
+      else
+        $stderr.puts "WARNING: File '#{filename}' doesn't exist"
+      end
     end
 
     # TODO: fix readme

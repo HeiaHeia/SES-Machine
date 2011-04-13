@@ -1,5 +1,5 @@
 ENV['RAILS_ENV'] = 'test'
-ENV['RAILS_ROOT'] ||= File.dirname(__FILE__) + '/../../../..'
+ENV['RAILS_ROOT'] = File.join(File.dirname(__FILE__), 'fixtures')
 
 require 'test/unit'
-require 'ses_machine'
+require File.join(File.dirname(__FILE__), '..', 'lib', 'ses_machine')

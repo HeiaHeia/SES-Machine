@@ -4,6 +4,7 @@ class ConfigTest < Test::Unit::TestCase
 
   def setup
     @config = SesMachine::Config.instance
+    @config.send(:remove_instance_variable, :@database) if @config.instance_variable_defined?(:@database)
   end
 
   def teardown
