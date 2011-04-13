@@ -1,5 +1,8 @@
 # encoding: utf-8
 
+lib = File.expand_path(File.dirname(__FILE__))
+$:.unshift lib unless $:.include?(lib)
+
 require 'rubygems'
 
 gem 'rails', '~> 2.3.8'

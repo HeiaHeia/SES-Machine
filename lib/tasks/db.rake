@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), '..', 'ses_machine.rb')
+
 namespace :ses_machine do
   namespace :db do
 

@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), '..', 'ses_machine.rb')
+
 namespace :ses_machine do
   desc 'Check email with IMAP for new bounced and spam messages'
   task :check_email_imap do
