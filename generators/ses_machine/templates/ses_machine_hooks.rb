@@ -1,3 +1,11 @@
+module SesMachineAuthHooks
+  protected
+
+  def ses_machine_authorize!
+    true
+  end
+end
+
 # module SesMachineHooks
 #   def soft_bounce_hook(email)
 #     # Add your code
@@ -10,18 +18,14 @@
 #   def unknown_hook(email)
 #     # Add your code
 #   end
-# end
 #
+#   def spam_complaint_hook(email)
+#     # Add your code
+#   end
+#
+#   def auto_responder_hook(email)
+#     # Add your code
+#   end
+# end
+
 # SesMachine::Hooks.send :extend, SesMachineHooks
-
-
-module SesMachineAuthHooks
-  private
-
-  def ses_machine_authorize!
-    true
-  end
-end
-
-SesMachineController.send :include, SesMachineAuthHooks
-
