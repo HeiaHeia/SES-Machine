@@ -8,6 +8,7 @@ require 'rubygems'
 gem 'rails', '~> 2.3.8'
 gem 'activesupport', '~> 2.3.8'
 gem 'actionmailer', '~> 2.3.8'
+gem 'will_paginate', '~> 2.3'
 
 require 'singleton'
 require 'mongo'
