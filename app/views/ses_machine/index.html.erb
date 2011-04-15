@@ -1,6 +1,6 @@
 <h2>Mails Sent</h2>
 <div>
-  <% form_tag ses_machine_path, :method => :get do %>
+  <% form_tag url_for(:controller => 'ses_machine', :action => 'index'), :method => :get do %>
     <%= select_tag 'date', options_for_select(@monthly_stats, @date.to_s), :onchange => "this.form.submit();" %>
   <%- end -%>
 </div>

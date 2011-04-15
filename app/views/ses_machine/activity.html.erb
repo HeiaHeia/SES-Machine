@@ -22,7 +22,7 @@
       <%- date = message['date'] -%>
     <%- end -%>
     <div class="activity-item <%= bounce_type(message['bounce_type']).dasherize %>">
-      <span class="address"><%= link_to message['address'], ses_machine_message_path(:id => message['_id']) %></span>
+      <span class="address"><%= link_to message['address'], url_for(:controller => 'ses_machine', :action => 'show_message', :id => message['_id']) %></span>
       <br/>
       <div class="status">
         <%= bounce_type(message['bounce_type']).humanize %> &mdash; <%= message['date'].strftime('%d.%m.%Y %l:%M %p') %>
