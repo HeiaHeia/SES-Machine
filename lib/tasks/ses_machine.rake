@@ -22,9 +22,9 @@ namespace :ses_machine do
         mail = Mail.read_from_string(data.attr['RFC822'])
         message_id = data.attr['ENVELOPE']['in_reply_to']
         if message_id.blank?
-          message_id = mail['X-Original-To'].to_s.split('@').first
+          message_id = mail['X-Original-To'].to_s.split('@').first.to_s
         else
-          message_id = message_id.split('@').first[1..-1]
+          message_id = message_id.split('@').first[1..-1].to_s
         end
         doc = t.find_one('message_id' => message_id)
         if doc
@@ -65,7 +65,7 @@ namespace :ses_machine do
       imap.select(folder)
       imap.search(['FROM', 'complaints@email-abuse.amazonses.com', 'NOT', 'SEEN']).each do |message|
         data = imap.fetch(message, ['UID', 'ENVELOPE', 'RFC822'])[0]
-        message_id = data.attr['RFC822'].grep(/^Message-ID: (.+)\n/ix)[1][/<(.+)@/, 1]
+        message_id = data.attr['RFC822'].grep(/^Message-ID: (.+)\n/ix)[1][/<(.+)@/, 1].to_s
         doc = t.find_one('message_id' => message_id)
         if doc
           email = doc['address'].first
