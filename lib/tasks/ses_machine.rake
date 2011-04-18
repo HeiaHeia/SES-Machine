@@ -1,8 +1,8 @@
-require File.join(File.dirname(__FILE__), '..', 'ses_machine.rb')
+require 'net/imap'
 
 namespace :ses_machine do
   desc 'Check email with IMAP for new bounced and spam messages'
-  task :check_email_imap do
+  task :check_email_imap => :environment do
 
     imap = Net::IMAP.new(SesMachine.email_server, SesMachine.email_port, SesMachine.email_use_ssl)
     imap.login(SesMachine.email_account, SesMachine.email_password)
@@ -19,10 +19,15 @@ namespace :ses_machine do
       imap.select(folder)
       imap.search(['FROM', 'email-bounces.amazonses.com', 'NOT', 'SEEN']).each do |message|
         data = imap.fetch(message, ['UID', 'ENVELOPE', 'RFC822'])[0]
-        message_id = data.attr['ENVELOPE']['in_reply_to'].split('@').first[1..-1]
+        mail = Mail.read_from_string(data.attr['RFC822'])
+        message_id = data.attr['ENVELOPE']['in_reply_to']
+        if message_id.blank?
+          message_id = mail['X-Original-To'].to_s.split('@').first
+        else
+          message_id = message_id.split('@').first[1..-1]
+        end
         doc = t.find_one('message_id' => message_id)
         if doc
-          mail = Mail.read_from_string(data.attr['RFC822'])
           email = doc['address'].first
           bounce = {
             :uid => data.attr['UID'],
@@ -60,7 +65,7 @@ namespace :ses_machine do
       imap.select(folder)
       imap.search(['FROM', 'complaints@email-abuse.amazonses.com', 'NOT', 'SEEN']).each do |message|
         data = imap.fetch(message, ['UID', 'ENVELOPE', 'RFC822'])[0]
-        message_id = data.attr['ENVELOPE']['in_reply_to'].split('@').first[1..-1]
+        message_id = data.attr['RFC822'].grep(/^Message-ID: (.+)\n/ix)[1][/<(.+)@/, 1]
         doc = t.find_one('message_id' => message_id)
         if doc
           email = doc['address'].first
