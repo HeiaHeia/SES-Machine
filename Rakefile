@@ -33,10 +33,10 @@ spec = Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.author      = 'Kirill Nikitin'
   s.email       = 'locke23rus@gmail.com'
-  s.homepage    = 'http://heiaheia.com/'
+  s.homepage    = 'https://heiaheia.com/'
   s.summary     = 'Ses Machine'
   s.description = 'Ses Machine description'
-  
+
   s.files        = `git ls-files`.split("\n")
   s.test_files   = `git ls-files -- test/*`.split("\n")
   s.require_path = ['lib']

@@ -1,11 +1,12 @@
-# encoding: utf-8
+# -*- encoding : utf-8 -*-
+
 
 module SesMachine #:nodoc:
   class DB #:nodoc:
     class << self
-      
+
       def get_keywords(array)
-        array.map{|w| w.mb_chars.downcase.to_s}.uniq.delete_if{|w| w.mb_chars.size < 3}
+        array.map{|w| w.downcase.to_s}.uniq.delete_if{|w| w.size < 3}
       end
 
       def update_daily_stats

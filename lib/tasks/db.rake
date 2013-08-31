@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 namespace :ses_machine do
   namespace :db do
 

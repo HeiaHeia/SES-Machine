@@ -1,4 +1,6 @@
-class SesMachineController < ApplicationController
+# -*- encoding : utf-8 -*-
+
+class SesMachineController < Admin::ApplicationController
   unloadable
 
   unless ENV['RAILS_ENV'].eql?('test')

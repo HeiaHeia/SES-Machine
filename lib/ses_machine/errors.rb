@@ -1,4 +1,5 @@
-# encoding: utf-8
+# -*- encoding : utf-8 -*-
+
 
 module SesMachine #:nodoc
   module Errors #:nodoc
@@ -10,10 +11,11 @@ module SesMachine #:nodoc
     # Example:
     #
     # <tt>InvalidDatabase.new("Not a DB")</tt>
-    class InvalidDatabase < RuntimeError
+    class InvalidDatabase < StandardError
       def initialize(database)
         @database = database
       end
+
       def message
         "Database should be a Mongo::DB, not #{@database.class.name}"
       end

@@ -1,11 +1,15 @@
-# encoding: utf-8
+# -*- encoding : utf-8 -*-
+
 
 module SesMachine #:nodoc:
   class Config #:nodoc:
     include Singleton
 
-    attr_accessor :dkim_domain, :dkim_selector, :dkim_private_key,
-      :email_server, :email_port, :email_use_ssl, :email_account, :email_password, :email_imap_folders
+    attr_accessor :ses,
+                  :dkim_domain, :dkim_selector, :dkim_private_key,
+                  :email_server, :email_port, :email_use_ssl, :email_account, :email_password, :email_imap_folders
+    attr_reader :database, :use_dkim
+    alias_method :use_dkim?, :use_dkim
 
     # Defaults the configuration options
     def initialize
@@ -46,23 +50,9 @@ module SesMachine #:nodoc:
     # Returns:
     #
     # A boolean
-    def use_dkim=(value)
-      @use_dkim = value || false
+    def use_dkim=(value=false)
+      @use_dkim = value
     end
-
-    # TODO: fix readme
-    # Returns whether times are return from the database in UTC. If
-    # this setting is false, then times will be returned in the local time zone.
-    #
-    # Example:
-    #
-    # <tt>Config.use_dkim</tt>
-    #
-    # Returns:
-    #
-    # A boolean
-    attr_reader :use_dkim
-    alias_method :use_dkim?, :use_dkim
 
     # Configure SesMachine from a hash that was usually parsed out of yml.
     #
@@ -89,20 +79,6 @@ module SesMachine #:nodoc:
     def database=(db)
       check_database!(db)
       @database = db
-    end
-
-    # Returns the database, or if none has been set it will raise an
-    # error.
-    #
-    # Example:
-    #
-    # <tt>Config.database</tt>
-    #
-    # Returns:
-    #
-    # The +Mongo::DB+ instance.
-    def database
-      @database
     end
 
     protected

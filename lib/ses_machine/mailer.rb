@@ -1,14 +1,16 @@
-# encoding: utf-8
+# -*- encoding : utf-8 -*-
+
 
 module SesMachine #:nodoc:
-  module Mailer #:nodoc:
+  class Mailer #:nodoc:
+
+    def initialize(*args); end
 
     def perform_delivery_ses_machine(mail)
-      mail = Mail.read_from_string(mail.encoded) if ActionMailer::VERSION::MAJOR < 3
       raw_source = SesMachine.use_dkim? ? sign_mail(mail) : mail.encoded
 
       begin
-        response = ActionMailer::Base.custom_amazon_ses_mailer.send_raw_email(raw_source, :source => SesMachine.email_account)
+        response = SesMachine.ses.send_raw_email(raw_source, :source => SesMachine.email_account)
       rescue AWS::SES::ResponseError => e
         response = e.response
       end
@@ -23,13 +25,15 @@ module SesMachine #:nodoc:
         :response_code => response.code,
         :response_error => response.error.to_s,
         :bounce_type => response.error? ? SesMachine::Bounce::TYPES[:unknown] : 0,
-        '_keywords' => SesMachine::DB.get_keywords(mail.to + mail.subject.split)
+        '_keywords' => SesMachine::DB.get_keywords([mail.to].flatten + mail.subject.split)
       }
 
       doc.merge!(:message_id => response.message_id) unless response.error?
 
       SesMachine.database['mails'].insert(doc)
     end
+
+    alias_method :deliver!, :perform_delivery_ses_machine
 
     protected
 
@@ -61,4 +65,4 @@ module SesMachine #:nodoc:
   end
 end
 
-ActionMailer::Base.send :include, SesMachine::Mailer
+ActionMailer::Base.add_delivery_method :ses_machine, SesMachine::Mailer

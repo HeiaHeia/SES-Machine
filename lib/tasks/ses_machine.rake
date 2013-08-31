@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 require 'net/imap'
 
 namespace :ses_machine do
@@ -65,7 +67,7 @@ namespace :ses_machine do
       imap.select(folder)
       imap.search(['FROM', 'complaints@email-abuse.amazonses.com', 'NOT', 'SEEN']).each do |message|
         data = imap.fetch(message, ['UID', 'ENVELOPE', 'RFC822'])[0]
-        message_id = data.attr['RFC822'].grep(/^Message-ID: (.+)\n/ix)[1][/<(.+)@/, 1].to_s
+        message_id = data.attr['RFC822'].split("\r\n").grep(/\AMessage-ID: (.+)\z/ix)[1][/<(.+)@/, 1].to_s
         doc = t.find_one('message_id' => message_id)
         if doc
           email = doc['address'].first

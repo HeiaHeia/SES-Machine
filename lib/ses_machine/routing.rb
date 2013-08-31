@@ -1,16 +1,8 @@
-# encoding: utf-8
+# -*- encoding : utf-8 -*-
 
-module SesMachine #:nodoc:
-  module Routing #:nodoc:
-    module MapperExtensions
-      def ses_machine
-        @set.add_named_route("ses_machine", "ses_machine", {:controller => "ses_machine", :action => "index"})
-        @set.add_named_route("ses_machine_activity", "ses_machine/activity", {:controller => "ses_machine", :action => "activity"})
-        @set.add_named_route("ses_machine_message", "ses_machine/message/:id", {:controller => "ses_machine", :action => "show_message"})
-      end
-    end
-  end
+
+Rails.application.routes.draw do
+  match "ses_machine" => "ses_machine#index", :as => :ses_machine
+  match "ses_machine/activity" => "ses_machine#activity", :as => :ses_machine_activity
+  match "ses_machine/message/:id" => "ses_machine#show_message", :as => :ses_machine_message
 end
-
-# TODO: Check deprecation in Rails 3
-ActionController::Routing::RouteSet::Mapper.send :include, SesMachine::Routing::MapperExtensions

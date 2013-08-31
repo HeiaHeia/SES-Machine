@@ -1,6 +1,6 @@
 <h2>Activity</h2>
 
-<% form_tag request.path, :method => :get do %>
+<%= form_tag request.path, :method => :get do %>
   <%= select_tag :type, options_for_select(@bounce_types, @bounce_type), :onchange => "this.form.submit();" %>
   <%= text_field_tag "q", params[:q], :placeholder => 'Search by email or subject…' %>
   <%= submit_tag 'Search', :disable_with => 'Searching...' -%>

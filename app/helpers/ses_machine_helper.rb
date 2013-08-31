@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 module SesMachineHelper
   
   def bounce_type(type)

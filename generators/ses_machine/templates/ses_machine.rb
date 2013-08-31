@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 SesMachine.configure do |config|
   # Email configuration for rake tasks
   config.email_server = 'imap.googlemail.com'

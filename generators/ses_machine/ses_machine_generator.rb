@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class SesMachineGenerator < Rails::Generator::Base
   def manifest
     record do |m|

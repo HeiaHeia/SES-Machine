@@ -33,7 +33,7 @@
     <pre><%= h @mail['response'] %></pre>
   </div>
 <%- end -%>
-<div id="plain-text" style="font-size:small;border:1px solid #aaa;"><%= simple_format @mail['body'] %></div>
+<div id="plain-text" style="font-size:small;border:1px solid #aaa;"><%= simple_format @mail['body'].to_s %></div>
 <div id="raw-source" style="display:none;font-size:small;border:1px solid #aaa;">
   <%#= simple_format @mail['raw_source'] %>
   <pre><%= h @mail['raw_source'] %></pre>

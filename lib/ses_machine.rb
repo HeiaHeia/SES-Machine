@@ -1,14 +1,15 @@
-# encoding: utf-8
+# -*- encoding : utf-8 -*-
+
 
 lib = File.expand_path(File.dirname(__FILE__))
 $:.unshift lib unless $:.include?(lib)
 
-require 'rubygems'
+# require 'rubygems'
 
-gem 'rails', '~> 2.3.8'
-gem 'activesupport', '~> 2.3.8'
-gem 'actionmailer', '~> 2.3.8'
-gem 'will_paginate', '~> 2.3'
+# gem 'rails', '~> 2.3.8'
+# gem 'activesupport', '~> 2.3.8'
+# gem 'actionmailer', '~> 2.3.8'
+# gem 'will_paginate', '~> 2.3'
 
 require 'singleton'
 require 'mongo'
@@ -28,12 +29,15 @@ require 'ses_machine/routing'
 %w{ models controllers helpers}.each do |dir|
   path = File.join(File.dirname(__FILE__), '..', 'app', dir)
   $LOAD_PATH << path
-  ActiveSupport::Dependencies.load_paths << path
-  ActiveSupport::Dependencies.load_once_paths.delete(path)
-  ActionController::Base.append_view_path(File.join(File.dirname(__FILE__), '..', 'app', 'views'))
+  # ActiveSupport::Dependencies.load_paths << path
+  # ActiveSupport::Dependencies.load_once_paths.delete(path)
+  # ActionController::Base.append_view_path(File.join(File.dirname(__FILE__), '..', 'app', 'views'))
 end
 
-WillPaginate.enable_actionpack
+# WillPaginate.enable_actionpack
+if defined?(::Rails::Railtie)
+  require 'will_paginate/railtie'
+end
 
 module SesMachine #:nodoc
 
@@ -79,6 +83,6 @@ module SesMachine #:nodoc
 end
 
 ENV['RAILS_ENV'] ||= Rails.env || 'development'
-ENV['RAILS_ROOT'] ||= Rails.root || File.dirname(__FILE__) + '/../../../..'
+ENV['RAILS_ROOT'] ||= Rails.root.to_s || File.dirname(__FILE__) + '/../../../..'
 
 SesMachine.config.load

@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 require 'test_helper'
 require 'rails_generator'
 require 'rails_generator/scripts/generate'
