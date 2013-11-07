@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ses_machine (0.0.1)
+    ses_machine (0.0.2)
       aws-ses (>= 0.4.4)
       bson (>= 1.9.1)
       bson_ext (>= 1.9.1)

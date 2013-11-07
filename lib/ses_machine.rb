@@ -59,9 +59,14 @@ module SesMachine #:nodoc
     #
     # The SesMachine +Config+ singleton instance.
     def configure
-      SesMachine::Config.instance
       config = SesMachine::Config.instance
-      block_given? ? yield(config) : config
+
+      if block_given?
+        yield(config)
+        config.load
+      end
+
+      config
     end
     alias :config :configure
   end
@@ -82,6 +87,4 @@ module SesMachine #:nodoc
 end
 
 ENV['RAILS_ENV'] ||= Rails.env || 'development'
-ENV['RAILS_ROOT'] ||= Rails.root.to_s || File.dirname(__FILE__) + '/../../../..'
-
-SesMachine.config.load
+ENV['RAILS_ROOT'] ||= Rails.root.to_s

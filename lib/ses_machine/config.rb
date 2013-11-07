@@ -5,7 +5,7 @@ module SesMachine #:nodoc:
   class Config #:nodoc:
     include Singleton
 
-    attr_accessor :ses,
+    attr_accessor :ses, :path,
                   :dkim_domain, :dkim_selector, :dkim_private_key,
                   :email_server, :email_port, :email_use_ssl, :email_account, :email_password, :email_imap_folders
     attr_reader :database, :use_dkim
@@ -28,8 +28,8 @@ module SesMachine #:nodoc:
       @dkim_private_key = nil
     end
 
-    def load(filename=nil)
-      filename = File.join(ENV['RAILS_ROOT'], 'config', 'ses_machine.yml') if filename.blank?
+    def load
+      filename = path || File.join(ENV['RAILS_ROOT'], 'config', 'ses_machine.yml')
       if File.exist?(filename)
         settings = YAML.load_file(filename)[ENV['RAILS_ENV']]
         from_hash(settings)
